@@ -1,4 +1,4 @@
-## This demo shows how Spring batch works, the workflow of steps and chunking
+## This demo shows how Spring batch works, the workflow of steps, chunking and transaction boundaries with in a chunk
 
 
 ### How to build application

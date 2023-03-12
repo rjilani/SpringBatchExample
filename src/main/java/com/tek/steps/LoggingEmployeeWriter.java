@@ -37,19 +37,17 @@ public class LoggingEmployeeWriter implements ItemWriter<Employee> {
 
         items.forEach(i -> {
                     LOGGER.info("Received the information of a employee: {}", i);
-
-//                   This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
-//                    n++;
-//                    if (n > 3) {
-//                        throw new RuntimeException();
-//                    }
-
                     jdbcTemplate.update(
                             "INSERT INTO people (name, emailAddress, title) VALUES (?, ?, ?)",
                             i.getName(), i.getEmailAddress(), i.getTitle()
                     );
                 }
-
         );
+
+//        This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
+//        n++;
+//        if (n > 2) {
+//            throw new RuntimeException();
+//        }
     }
 }

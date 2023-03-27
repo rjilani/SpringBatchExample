@@ -11,9 +11,9 @@ import org.springframework.batch.item.ItemProcessor;
  *
  * @author Rashid Jilani
  */
-public class LoggingEmployeeProcessor implements ItemProcessor<Employee, Employee> {
+public class EmployeeProcessor implements ItemProcessor<Employee, Employee> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingEmployeeProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeProcessor.class);
 
     @Override
     public Employee process(Employee item) throws Exception {

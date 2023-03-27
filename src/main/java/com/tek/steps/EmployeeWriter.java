@@ -16,24 +16,22 @@ import java.util.List;
  *
  * @author Rashid Jilani
  */
-public class LoggingEmployeeWriter implements ItemWriter<Employee> {
+public class EmployeeWriter implements ItemWriter<Employee> {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
     int n = 0;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingEmployeeWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeWriter.class);
 
     @Override
     public void write(List<? extends Employee> items) throws Exception {
-        LOGGER.info(jdbcTemplate.toString());
-        LOGGER.info("Received the information of {} employee", items.size());
 
+        LOGGER.info("Received the information of {} employee", items.size());
 
         if (items.get(0).getName() != null) {
             PersistEmployee.wrtieToFile(items.toString());
         }
-
 
         items.forEach(i -> {
                     LOGGER.info("Received the information of a employee: {}", i);
@@ -44,7 +42,7 @@ public class LoggingEmployeeWriter implements ItemWriter<Employee> {
                 }
         );
 
-//        This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
+// This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
 //        n++;
 //        if (n > 2) {
 //            throw new RuntimeException();

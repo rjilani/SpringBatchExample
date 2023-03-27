@@ -2,8 +2,8 @@ package com.tek.config;
 
 import com.tek.dto.employee.Employee;
 import com.tek.steps.InMemoryEmployeeReader;
-import com.tek.steps.LoggingEmployeeProcessor;
-import com.tek.steps.LoggingEmployeeWriter;
+import com.tek.steps.EmployeeProcessor;
+import com.tek.steps.EmployeeWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
@@ -29,12 +29,12 @@ public class InMemoryEmployeeJobConfig {
 
     @Bean
     ItemProcessor<Employee, Employee> inMemoryEmployeeProcessor() {
-        return new LoggingEmployeeProcessor();
+        return new EmployeeProcessor();
     }
 
     @Bean
     ItemWriter<Employee> inMemoryEmployeeWriter() {
-        return new LoggingEmployeeWriter();
+        return new EmployeeWriter();
     }
 
     @Bean

@@ -15,6 +15,8 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 /**
  * @author Rashid Jilani
@@ -47,6 +49,7 @@ public class InMemoryEmployeeJobConfig {
                 .reader(inMemoryEmployeeReader)
                 .processor(inMemoryEmployeeProcessor)
                 .writer(inMemoryEmployeeWriter)
+                .taskExecutor(taskExecutor())
                 .build();
     }
 
@@ -58,5 +61,12 @@ public class InMemoryEmployeeJobConfig {
                 .flow(inMemoryEmployeeStep)
                 .end()
                 .build();
+    }
+
+    @Bean
+    public TaskExecutor taskExecutor() {
+        SimpleAsyncTaskExecutor taskExecutor = new SimpleAsyncTaskExecutor("spring_batch-example");
+        taskExecutor.setConcurrencyLimit(4);
+        return taskExecutor;
     }
 }

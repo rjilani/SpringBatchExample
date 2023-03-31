@@ -15,12 +15,8 @@ public class PersistEmployee {
     private static final Logger LOGGER = LoggerFactory.getLogger(PersistEmployee.class);
     public static void wrtieToFile(String s){
 
-        Date date = new Date();
-        long msec = date.getTime();
-
-
         try {
-            File file = new File("employee-" + msec +  ".txt");
+            File file = new File("employee-" + Math.random() +  ".txt");
             file.createNewFile();
             LOGGER.info("file get created in the folder named: {}", file.getAbsolutePath());
             Files.write(Paths.get(file.getAbsolutePath()), s.getBytes(StandardCharsets.UTF_8));

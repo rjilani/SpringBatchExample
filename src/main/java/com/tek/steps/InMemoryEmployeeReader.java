@@ -7,6 +7,7 @@ import org.springframework.batch.item.ItemReader;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -28,32 +29,32 @@ public class InMemoryEmployeeReader implements ItemReader<Employee> {
     private void initialize() {
         Employee jony = new Employee();
         jony.setEmailAddress("jony.tester@gmail.com");
-        jony.setName("jony Tester");
+        jony.setName("Jony Tester");
         jony.setTitle("Tester");
 
         Employee rick = new Employee();
         rick.setEmailAddress("rick.newbie@gmail.com");
-        rick.setName("Rick junior");
+        rick.setName("Rick Junior");
         rick.setTitle("junior devloper");
 
         Employee jane = new Employee();
         jane.setEmailAddress("jane.intermediate@gmail.com");
-        jane.setName("jane Intermediate");
+        jane.setName("Jane Intermediate");
         jane.setTitle("intermediate developer");
 
         Employee tom = new Employee();
         tom.setEmailAddress("tom.po@gmail.com");
-        tom.setName("tom Po");
+        tom.setName("Tom Powell");
         tom.setTitle("Produc Owner");
 
         Employee ram = new Employee();
         ram.setEmailAddress("ram.newbie@gmail.com");
-        ram.setName("Ram dev");
+        ram.setName("Ram Dev");
         ram.setTitle("Ram devloper");
 
         Employee rekha = new Employee();
         rekha.setEmailAddress("rekha.intermediate@gmail.com");
-        rekha.setName("rekha Intermediate");
+        rekha.setName("Rekha Intermediate");
         rekha.setTitle("rekha developer");
 
         Employee rich = new Employee();
@@ -63,12 +64,12 @@ public class InMemoryEmployeeReader implements ItemReader<Employee> {
 
         Employee sonu = new Employee();
         sonu.setEmailAddress("sonu.newbie@gmail.com");
-        sonu.setName("sonu dev");
+        sonu.setName("Sonu Dev");
         sonu.setTitle("sonu devloper");
 
         Employee javed = new Employee();
         javed.setEmailAddress("javed.senior@gmail.com");
-        javed.setName("javed Senior");
+        javed.setName("Javed Senior");
         javed.setTitle("Senior developer");
 
         Employee raghav = new Employee();
@@ -76,8 +77,10 @@ public class InMemoryEmployeeReader implements ItemReader<Employee> {
         raghav.setName("Ragahav Senior");
         raghav.setTitle("Senior developer");
 
+        employee =  Arrays.asList(jony, rick, jane, tom, ram, rekha, rich, sonu, javed, raghav);
+        employee.sort(Comparator.comparing(Employee::getName));
+        employee.forEach(e -> System.out.println(e.getName()));
 
-        employee = Collections.unmodifiableList(Arrays.asList(jony, rick, jane, tom, ram, rekha, rich, sonu, javed, raghav));
         nextemployeeIndex = 0;
     }
 
@@ -87,10 +90,13 @@ public class InMemoryEmployeeReader implements ItemReader<Employee> {
 
         Employee nextemployee = null;
 
-        if (nextemployeeIndex < employee.size()) {
-            nextemployee = employee.get(nextemployeeIndex);
-            nextemployeeIndex++;
+        synchronized (this) {
+            if (nextemployeeIndex < employee.size()) {
+                nextemployee = employee.get(nextemployeeIndex);
+                nextemployeeIndex++;
+            }
         }
+
 
         LOGGER.info("Found employee: {}", nextemployee);
 

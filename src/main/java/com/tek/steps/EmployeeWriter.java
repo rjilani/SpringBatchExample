@@ -42,10 +42,5 @@ public class EmployeeWriter implements ItemWriter<Employee> {
                 }
         );
 
-// This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
-//        n++;
-//        if (n > 2) {
-//            throw new RuntimeException();
-//        }
     }
 }

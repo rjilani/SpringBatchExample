@@ -4,8 +4,10 @@ import com.tek.dto.employee.Employee;
 import com.tek.util.PersistEmployee;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.List;
@@ -25,11 +27,11 @@ public class EmployeeWriter implements ItemWriter<Employee> {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeWriter.class);
 
     @Override
-    public void write(List<? extends Employee> items) throws Exception {
+    public void write(Chunk<? extends Employee> items) throws Exception {
 
         LOGGER.info("Received the information of {} employee", items.size());
 
-        if (items.get(0).getName() != null) {
+        if (items.getItems().get(0).getName() != null) {
             PersistEmployee.wrtieToFile(items.toString());
         }
 
@@ -41,6 +43,22 @@ public class EmployeeWriter implements ItemWriter<Employee> {
                     );
                 }
         );
+
+        String sql = "select * from people";
+
+        List<Employee> customers = jdbcTemplate.query(
+                sql,
+                new BeanPropertyRowMapper(Employee.class));
+
+        System.out.println(customers.size());
+        customers.forEach(i -> System.out.println(i.getName()));
+
+        //This block of code demonstrate the transaction failure, and the transaction boundaries related to chunk
+        n++;
+
+        if (n > 2) {
+            throw new RuntimeException();
+        }
 
     }
 }

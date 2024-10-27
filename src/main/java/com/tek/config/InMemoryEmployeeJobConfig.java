@@ -6,15 +6,15 @@ import com.tek.steps.EmployeeProcessor;
 import com.tek.steps.EmployeeWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @author Rashid Jilani
@@ -36,27 +36,27 @@ public class InMemoryEmployeeJobConfig {
     ItemWriter<Employee> inMemoryEmployeeWriter() {
         return new EmployeeWriter();
     }
-
+    
     @Bean
-    Step inMemoryEmployeeStep(ItemReader<Employee> inMemoryEmployeeReader,
-                             ItemProcessor<Employee, Employee> inMemoryEmployeeProcessor,
-                             ItemWriter<Employee> inMemoryEmployeeWriter,
-                             StepBuilderFactory stepBuilderFactory) {
-        return stepBuilderFactory.get("inMemoryEmployeeStep")
-                .<Employee, Employee>chunk(3)
+    public Step inMemoryEmployeeStep(final JobRepository jobRepository, final PlatformTransactionManager transactionManager, 
+    		ItemReader<Employee> inMemoryEmployeeReader, ItemProcessor<Employee, Employee> inMemoryEmployeeProcessor,
+            ItemWriter<Employee> inMemoryEmployeeWriter)  {
+        return new StepBuilder("inMemoryEmployeeStep", jobRepository)
+                .<Employee, Employee>chunk(3, transactionManager)
                 .reader(inMemoryEmployeeReader)
                 .processor(inMemoryEmployeeProcessor)
                 .writer(inMemoryEmployeeWriter)
                 .build();
     }
-
+    
     @Bean
-    Job inMemoryEmployeeJob(JobBuilderFactory jobBuilderFactory,
-                           @Qualifier("inMemoryEmployeeStep") Step inMemoryEmployeeStep) {
-        return jobBuilderFactory.get("inMemoryEmployeeJob")
-                .incrementer(new RunIdIncrementer())
-                .flow(inMemoryEmployeeStep)
-                .end()
+    public Job inMemoryEmployeeJob(final JobRepository jobRepository, final PlatformTransactionManager transactionManager, 
+    		ItemReader<Employee> inMemoryEmployeeReader, ItemProcessor<Employee, Employee> inMemoryEmployeeProcessor,
+            ItemWriter<Employee> inMemoryEmployeeWriter) {
+        return new JobBuilder("inMemoryEmployeeJob", jobRepository)
+                .start(inMemoryEmployeeStep(jobRepository, transactionManager, inMemoryEmployeeReader, inMemoryEmployeeProcessor,inMemoryEmployeeWriter))
                 .build();
     }
+    
+    
 }
